@@ -13,7 +13,7 @@ Dessert which has crust
 Superhero
 Four arms
 Bug-type which has 3 different forms
-Bug type that regularly goes to the gym
+Bug-type that regularly goes to the gym
 Evolves when traded holding Deep Sea Tooth or Deep Sea Scale
 Only Steel type with the ability Prankster
 The only Ultra Beast pre-evo
@@ -30,11 +30,16 @@ Lowest BST
 Paradox Pokémon weak to Fire, Ice, Fighting, Poison, Flying, Bug, and Fairy
 Learns False Surrender upon its evolution
 Round 2
-Pokémon with 4x weaknesses
+Pokémon with 4x weakness
 Mono Electric Pokémon
 Pokémon part of cross-gen evolution
 Pokémon that has Frisk as one of its abilities
 Pokémon that learns Rapid Spin
+Mono Poison Pokémon
+Pokémon weak to both Fighting and Ground type moves
+Pokémon that learns Leech Seed
+Pokémon that has Runaway as one of its abilities
+Pokémon that evolves from trading
 Round 3
 thwackey.jpg
 exploud.jpg
@@ -60,6 +65,7 @@ Mono-normal type Pokémon
 Pokémon immune to Earthquake without Mold Breaker or similar abilities
 Pokémon Ash owned
 Object Pokémon
-Middle stage Pokémon
-Pokémon between 1 foot to 2 foot
-330 lbs>>>
+Middle-stage Pokémon
+Pokémon with height between 1'00" to 2'00"
+Pokémon that have more weight than 330 lbs
+Pokémon that learns Bulk Up by TM
