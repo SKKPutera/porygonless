@@ -108,9 +108,22 @@
         responses[input.name] = input.value;
       });
 
-      console.log("Form submitted:", responses);
-      alert("Thanks for submitting! Check the console for your answers.");
-      // Could POST to server / Google Sheets API here
+      fetch('https://script.google.com/macros/s/AKfycbwdX247joyH7zebJDwsZvH0dKzYExzJy-Np5NCFau0oQwFuQcO1JNAKx2yxlJIO-4_8/exec', {
+        method: 'POST',
+        body: JSON.stringify(responses),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert("Thanks for submitting — your answers are saved!");
+      })
+      .catch(error => {
+        alert("Oops — something went wrong.");
+        console.error(error);
+      });
+
     });
   </script>
 </body>
