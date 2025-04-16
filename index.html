@@ -163,7 +163,7 @@
 
       const roundTitle = pages[index]?.querySelector('h2')?.textContent;
       if (roundTitle === "Round 2" || roundTitle === "Round 4") {
-        startTimer(15, () => nextPage());
+        startTimer(30, () => nextPage());
       }
     }
 
@@ -187,8 +187,21 @@
         responses[select.name] = select.multiple ? selectedOptions : selectedOptions[0];
       });
 
-      console.log(responses); // replace with your fetch() call to Google Apps Script here
-      alert("Thanks for submitting — your answers are saved!");
+      fetch('https://script.google.com/macros/s/AKfycbwdX247joyH7zebJDwsZvH0dKzYExzJy-Np5NCFau0oQwFuQcO1JNAKx2yxlJIO-4_8/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify(responses),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(() => {
+        alert("Thanks for submitting — your answers are saved!");
+      })
+      .catch(error => {
+        alert("Oops — something went wrong.");
+        console.error(error);
+      });
     }
   </script>
 </body>
