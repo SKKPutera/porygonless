@@ -26,17 +26,22 @@
       border-bottom: 2px solid #ddd;
       padding-bottom: 0.3rem;
     }
+    #timer {
+      font-size: 1.2rem;
+      margin: 1rem 0;
+      color: crimson;
+    }
   </style>
 </head>
 <body>
   <h1>Porygonless Pokémon Pointless Form</h1>
+  <div id="timer"></div>
   <form id="pokeForm">
     <div id="formFields"></div>
     <button type="submit">Submit</button>
   </form>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/selectize/dist/js/standalone/selectize.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/selectize"></script>
   <script>
     const formFields = document.getElementById('formFields');
     let pokemonList = [];
@@ -48,6 +53,26 @@
         pokemonList = data.split('\n').filter(p => p.trim() !== '');
         loadQuestions();
       });
+
+    let timerInterval;
+
+    function startTimer(seconds) {
+      const timerDisplay = document.getElementById('timer');
+      let timeLeft = seconds;
+      timerDisplay.textContent = `⏳ ${timeLeft} seconds remaining`;
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `⏳ ${timeLeft} seconds remaining`;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          timerDisplay.textContent = "⏰ Time's up!";
+          document.querySelectorAll('select').forEach(el => el.disabled = true);
+          document.querySelector('button[type="submit"]').disabled = true;
+        }
+      }, 1000);
+    }
 
     function loadQuestions() {
       fetch('question.txt')
@@ -63,6 +88,12 @@
               const roundHeading = document.createElement('h2');
               roundHeading.textContent = currentRound;
               formFields.appendChild(roundHeading);
+
+              if (currentRound === "Round 2" || currentRound === "Round 4") {
+                // Start a 30s timer at start of these rounds
+                startTimer(30);
+              }
+
             } else {
               const div = document.createElement('div');
               div.className = 'question';
@@ -80,12 +111,27 @@
                 $(`#q${questionCounter}`).selectize();
                 questionCounter++;
 
-              } else if (currentRound.startsWith("Round")) {
+              } else if (currentRound === "Round 2" || currentRound === "Round 4") {
+                // Multi-answer select
+                div.innerHTML = `
+                  <label for="q${questionCounter}">${line}</label><br>
+                  <select id="q${questionCounter}" name="q${questionCounter}[]" multiple required>
+                    <option value="PIKACHU" selected>PIKACHU</option>
+                    ${pokemonList.map(p => `<option value="${p}">${p}</option>`).join('')}
+                  </select>
+                `;
+                formFields.appendChild(div);
+                $(`#q${questionCounter}`).selectize({
+                  maxItems: 3 // adjust max number of selections if you want
+                });
+                questionCounter++;
+
+              } else {
                 // Regular question with dropdown
                 div.innerHTML = `
                   <label for="q${questionCounter}">${line}</label><br>
                   <select id="q${questionCounter}" name="q${questionCounter}" required>
-                    <option value="PIKACHU">Choose a Pokémon...</option>
+                    <option value="PIKACHU" selected>PIKACHU</option>
                     ${pokemonList.map(p => `<option value="${p}">${p}</option>`).join('')}
                   </select>
                 `;
@@ -102,10 +148,11 @@
     document.getElementById('pokeForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const responses = {};
-      const inputs = document.querySelectorAll('select');
+      const selects = document.querySelectorAll('select');
 
-      inputs.forEach(input => {
-        responses[input.name] = input.value;
+      selects.forEach(select => {
+        const selectedOptions = Array.from(select.selectedOptions).map(o => o.value);
+        responses[select.name] = select.multiple ? selectedOptions : selectedOptions[0];
       });
 
       fetch('https://script.google.com/macros/s/AKfycbwdX247joyH7zebJDwsZvH0dKzYExzJy-Np5NCFau0oQwFuQcO1JNAKx2yxlJIO-4_8/exec', {
@@ -123,8 +170,6 @@
         alert("Oops — something went wrong.");
         console.error(error);
       });
-
-
     });
   </script>
 </body>
