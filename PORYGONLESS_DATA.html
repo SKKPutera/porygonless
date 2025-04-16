@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Porygonless Pokémon Pointless Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/selectize/dist/css/selectize.default.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+    label {
+      font-weight: bold;
+    }
+    .question {
+      margin-bottom: 1.5rem;
+    }
+    img {
+      max-width: 300px;
+      margin: 0.5rem 0;
+    }
+    h2 {
+      margin-top: 2rem;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0.3rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Porygonless Pokémon Pointless Form</h1>
+  <form id="pokeForm">
+    <div id="formFields"></div>
+    <button type="submit">Submit</button>
+  </form>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/selectize/dist/js/standalone/selectize.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/selectize"></script>
+  <script>
+    const formFields = document.getElementById('formFields');
+    let pokemonList = [];
+
+    // Load Pokémon list
+    fetch('POKEMON.txt')
+      .then(response => response.text())
+      .then(data => {
+        pokemonList = data.split('\n').filter(p => p.trim() !== '');
+        loadQuestions();
+      });
+
+    function loadQuestions() {
+      fetch('question.txt')
+        .then(response => response.text())
+        .then(data => {
+          const lines = data.split('\n').map(line => line.trim()).filter(line => line !== '');
+          let currentRound = '';
+          let questionCounter = 1;
+
+          lines.forEach(line => {
+            if (line.startsWith("Round")) {
+              currentRound = line;
+              const roundHeading = document.createElement('h2');
+              roundHeading.textContent = currentRound;
+              formFields.appendChild(roundHeading);
+            } else {
+              const div = document.createElement('div');
+              div.className = 'question';
+
+              if (currentRound === "Round 3") {
+                // Image question
+                div.innerHTML = `
+                  <img src="${line}" alt="Question ${questionCounter}">
+                  <select id="q${questionCounter}" name="q${questionCounter}" required>
+                    <option value="">Choose a Pokémon...</option>
+                    ${pokemonList.map(p => `<option value="${p}">${p}</option>`).join('')}
+                  </select>
+                `;
+                formFields.appendChild(div);
+                $(`#q${questionCounter}`).selectize();
+                questionCounter++;
+
+              } else if (currentRound.startsWith("Round")) {
+                // Regular question with dropdown
+                div.innerHTML = `
+                  <label for="q${questionCounter}">${line}</label><br>
+                  <select id="q${questionCounter}" name="q${questionCounter}" required>
+                    <option value="">Choose a Pokémon...</option>
+                    ${pokemonList.map(p => `<option value="${p}">${p}</option>`).join('')}
+                  </select>
+                `;
+                formFields.appendChild(div);
+                $(`#q${questionCounter}`).selectize();
+                questionCounter++;
+              }
+            }
+          });
+        });
+    }
+
+    // Form submission handler
+    document.getElementById('pokeForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const responses = {};
+      const inputs = document.querySelectorAll('select');
+
+      inputs.forEach(input => {
+        responses[input.name] = input.value;
+      });
+
+      console.log("Form submitted:", responses);
+      alert("Thanks for submitting! Check the console for your answers.");
+      // Could POST to server / Google Sheets API here
+    });
+  </script>
+</body>
+</html>
