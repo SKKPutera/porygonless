@@ -72,7 +72,7 @@
                 div.innerHTML = `
                   <img src="${line}" alt="Question ${questionCounter}">
                   <select id="q${questionCounter}" name="q${questionCounter}" required>
-                    <option value="">Choose a Pokémon...</option>
+                    <option value="PIKACHU">Choose a Pokémon...</option>
                     ${pokemonList.map(p => `<option value="${p}">${p}</option>`).join('')}
                   </select>
                 `;
@@ -85,7 +85,7 @@
                 div.innerHTML = `
                   <label for="q${questionCounter}">${line}</label><br>
                   <select id="q${questionCounter}" name="q${questionCounter}" required>
-                    <option value="">Choose a Pokémon...</option>
+                    <option value="PIKACHU">Choose a Pokémon...</option>
                     ${pokemonList.map(p => `<option value="${p}">${p}</option>`).join('')}
                   </select>
                 `;
