@@ -60,7 +60,6 @@
     let pages = [];
     let timerInterval;
 
-    // Load Pokémon list
     fetch('POKEMON.txt')
       .then(response => response.text())
       .then(data => {
@@ -91,19 +90,18 @@
           const lines = data.split('\n').map(line => line.trim()).filter(line => line !== '');
           let currentRound = '';
           let questionCounter = 1;
-          let currentPage = null;
 
           lines.forEach(line => {
             if (line.startsWith("Round")) {
               currentRound = line;
-              currentPage = document.createElement('div');
-              currentPage.className = 'page';
-              const roundHeading = document.createElement('h2');
-              roundHeading.textContent = currentRound;
-              currentPage.appendChild(roundHeading);
-              formPages.appendChild(currentPage);
-              pages.push(currentPage);
             } else {
+              const page = document.createElement('div');
+              page.className = 'page';
+
+              const heading = document.createElement('h2');
+              heading.textContent = currentRound;
+              page.appendChild(heading);
+
               const div = document.createElement('div');
               div.className = 'question';
 
@@ -115,9 +113,11 @@
                     ${pokemonList.map(p => `<option value="${p}">${p}</option>`).join('')}
                   </select>
                 `;
-                currentPage.appendChild(div);
+                page.appendChild(div);
+                formPages.appendChild(page);
+                pages.push(page);
                 $(`#q${questionCounter}`).selectize();
-                questionCounter++;
+
               } else if (currentRound === "Round 2" || currentRound === "Round 4") {
                 div.innerHTML = `
                   <label for="q${questionCounter}">${line}</label><br>
@@ -126,9 +126,11 @@
                     ${pokemonList.map(p => `<option value="${p}">${p}</option>`).join('')}
                   </select>
                 `;
-                currentPage.appendChild(div);
+                page.appendChild(div);
+                formPages.appendChild(page);
+                pages.push(page);
                 $(`#q${questionCounter}`).selectize({ maxItems: 3 });
-                questionCounter++;
+
               } else {
                 div.innerHTML = `
                   <label for="q${questionCounter}">${line}</label><br>
@@ -137,10 +139,13 @@
                     ${pokemonList.map(p => `<option value="${p}">${p}</option>`).join('')}
                   </select>
                 `;
-                currentPage.appendChild(div);
+                page.appendChild(div);
+                formPages.appendChild(page);
+                pages.push(page);
                 $(`#q${questionCounter}`).selectize();
-                questionCounter++;
               }
+
+              questionCounter++;
             }
           });
 
@@ -157,10 +162,8 @@
       timerDisplay.textContent = '';
 
       const roundTitle = pages[index]?.querySelector('h2')?.textContent;
-      if (roundTitle === "Round 2") {
-        startTimer(30, () => nextPage());
-      } else if (roundTitle === "Round 4") {
-        startTimer(30, () => submitForm());
+      if (roundTitle === "Round 2" || roundTitle === "Round 4") {
+        startTimer(15, () => nextPage());
       }
     }
 
@@ -184,7 +187,7 @@
         responses[select.name] = select.multiple ? selectedOptions : selectedOptions[0];
       });
 
-      console.log(responses); // replace this with fetch to your API
+      console.log(responses); // replace with your fetch() call to Google Apps Script here
       alert("Thanks for submitting — your answers are saved!");
     }
   </script>
